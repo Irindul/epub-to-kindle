@@ -1,6 +1,9 @@
 # Epub to Mobi to Kindle :smile: 
 
-This is a simple set of scripts to convert `.epub` to `.mobi` and send them by mail.
+> This only works on macOS for now and I will try to generify it for other OS if I ever find the time...
+
+
+This is a simple set of scripts to convert `.epub` to `.mobi` and send them by mail using a Gmail account.
 
 The mail configuration must be created in an `env` file which could look like so: 
 ```bash 
@@ -19,8 +22,6 @@ chmod +x convert_and_send.sh
 ./convert_and_send.sh
 ```
 
-> This only works on macOS for now and I will try to generify it for other OS if I ever find the time...
-
 ## Conversion
 
 For the conversion, I used the `ebook-convert` command of the calibre app. The script `convert_epub_to_mobi.sh` will simply get all files of the folder `Epubs/` and convert them to mobi in the `Mobi/` folder.  The folder `Epubs/` is deleted at the end. 
@@ -37,3 +38,12 @@ The script `send_to_kindle.py` will get all files of the `Mobi/` folder, and bui
 
 
 I used Python for this part because it was getting a bit of a hassle with bash and the `mail` command to send multiple attachments.
+
+
+## TO DO 
+
+- [ ] Better error handling
+- [ ] Check for existing file for renaming
+- [ ] Add support for `dotenv` library
+- [ ] Convert `convert_epub_to_mobi.sh` to Python
+- [ ] Add directories (epub, mobi) as arguments to the script
