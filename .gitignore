@@ -1,0 +1,7 @@
+Epubs/*
+!Epubs/.gitkeep
+Mobi/*
+!Mobi/.gitkeep
+env
+.DS_STORE
+
