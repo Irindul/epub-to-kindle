@@ -14,7 +14,6 @@ export KINDLE_MAIL_TO="youkindlemail@kindle.com"
 
 This file will be sourced by the `convert_and_send.sh` so that the credentials are not in the code
 
-
 Then, all you need to do, is execute the `convert_and_send.sh` script :
 
 ```bash

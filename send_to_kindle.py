@@ -60,13 +60,6 @@ to_addr = os.getenv('KINDLE_MAIL_TO')
 # Setting different paths
 cwd = os.getcwd()
 epubs_path = f'{cwd}/Mobi'
-converter_sh = f'{cwd}/convert_epub_to_mobi.sh'
-
-
-# Calling bash script to convert the file
-rc = subprocess.call(converter_sh)
-if rc != 0:
-    exit(rc)
 
 # Crafting mail
 msg = MIMEMultipart()
