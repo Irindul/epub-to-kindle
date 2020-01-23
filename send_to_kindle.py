@@ -2,6 +2,7 @@
 import os
 import smtplib
 import subprocess
+import sys
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -9,16 +10,45 @@ from email import encoders
 from os import listdir
 from os.path import isfile, join
 
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
+wanted_ext = '.mobi'
+
+
+def print_progress(msg):
+    print(f'[{bcolors.WARNING}*{bcolors.ENDC}] - {msg}')
+
+
+def print_success(msg):
+    print(f'[{bcolors.OKGREEN}+{bcolors.ENDC}] - {msg}')
+
+
+def print_error(msg):
+    sys.stderr.write(f'[{bcolors.FAIL}x{bcolors.ENDC}] - {msg}')
+    exit(1)
+
+
 def check_env(env):
     if env not in os.environ:
-        print(f'You need to set the {env} variable')
-        exit(1)
+        print_error(f'you need to set the {env} variable')
+
 
 def is_wanted_ext(path):
     _, ext = os.path.splitext(path)
     return ext == wanted_ext
 
 
+# Ensuring env variables are properly set
 check_env("KINDLE_MAIL_ADDR")
 check_env("KINDLE_MAIL_PWD")
 check_env("KINDLE_MAIL_TO")
@@ -27,40 +57,38 @@ from_addr = os.getenv('KINDLE_MAIL_ADDR')
 pwd = os.getenv('KINDLE_MAIL_PWD')
 to_addr = os.getenv('KINDLE_MAIL_TO')
 
+# Setting different paths
 cwd = os.getcwd()
 epubs_path = f'{cwd}/Mobi'
-wanted_ext = '.mobi'
-from_addr = os.getenv("KINDLE_MAIL_ADDR")
-to_addr = "mathieu.regnard2@gmail.com"
 converter_sh = f'{cwd}/convert_epub_to_mobi.sh'
 
+
+# Calling bash script to convert the file
 rc = subprocess.call(converter_sh)
 if rc != 0:
     exit(rc)
 
+# Crafting mail
 msg = MIMEMultipart()
 msg['From'] = from_addr
 msg['To'] = to_addr
 msg['Subject'] = "New Ebooks"
+msg.attach(MIMEText("New books coming up!", 'plain'))
 
-body = "New books coming up!"
-
-msg.attach(MIMEText(body, 'plain'))
-books = [f for f in listdir(epubs_path) if isfile(join(epubs_path, f)) and is_wanted_ext(f) ]
+# Listing wanted files (.epub)
+books = [f for f in listdir(epubs_path) if isfile(
+    join(epubs_path, f)) and is_wanted_ext(f)]
 
 if len(books) == 0:
-    print('Hey! There is no epub in that folder :\'(')
+    print
     exit(0)
 
 for book in books:
     _, ext = os.path.splitext(book)
-    if ext != wanted_ext:
-        print(f'Skipping {book} for there is no .epub extension')
-        continue
 
-    print(f'Building attachment for {book}')
-
+    print_progress(f'building attachment for {book}')
     book_path = f'{epubs_path}/{book}'
+
     with open(book_path, 'rb') as attachment:
         p = MIMEBase('application', 'octet-stream')
         p.set_payload(attachment.read())
@@ -68,20 +96,24 @@ for book in books:
         p.add_header('Content-Disposition', f'attachment; filename= {book}')
         msg.attach(p)
 
-    print('Deleting file...')
+    print_progress('deleting file...')
     os.remove(book_path)
 
+# converting the message as text
+text = msg.as_string()
 
+
+print_progress(f'logging in to {from_addr} account')
 s = smtplib.SMTP('smtp.gmail.com', 587)
-
-print("Logging in to GMAIL")
 s.starttls()
 s.login(from_addr, pwd)
 
-text = msg.as_string()
+print_success(f'successful login')
 
-print(f'Sending mail to {to_addr}')
+print_progress(f'sending mail to {to_addr}')
 
 s.sendmail(from_addr, to_addr, text)
-print('[*] Sent :D')
+print_success('Sent :D')
+
+# Freeing memory
 s.quit()

@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
 
-PATH="$PATH:/Applications/calibre.app/Contents/MacOS/"
 set -o errexit
 set -o pipefail
 set -o nounset
+
+# For macOS, so that I can call ebook-converter
+
+PATH="$PATH:/Applications/calibre.app/Contents/MacOS/"
 
 EPUBS="$(pwd)/Epubs/*.epub"
 MOBI="$(pwd)/Mobi/"
 for book in ${EPUBS}; do
     title=$(basename "${book}" .epub)
     if [[ ${title} == ".gitkeep" ]]; then
+        continue
+    fi
+    if [ ! -f "${book}" ]; then
         continue
     fi
     echo "Converting ${title}.epub ..."
