@@ -41,8 +41,8 @@ I used Python for this part because it was getting a bit of a hassle with bash a
 
 ## TO DO 
 
-- [ ] Better error handling
+- [x] Better error handling
 - [ ] Check for existing file for renaming
 - [ ] Add support for `dotenv` library
-- [ ] Convert `convert_epub_to_mobi.sh` to Python
-- [ ] Add directories (epub, mobi) as arguments to the script
+- [x] Convert `convert_epub_to_mobi.sh` to Python
+- [x] Add directories (epub, mobi) as arguments to the script
