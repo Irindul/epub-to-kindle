@@ -90,7 +90,7 @@ for book in books:
         msg.attach(p)
 
     print_progress('deleting file...')
-    os.remove(book_path)
+    #os.remove(book_path)
 
 # converting the message as text
 text = msg.as_string()
