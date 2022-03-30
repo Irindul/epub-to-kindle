@@ -4,4 +4,5 @@ Mobi/*
 !Mobi/.gitkeep
 env
 .DS_STORE
+Archive/*
 
